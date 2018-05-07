@@ -1,8 +1,8 @@
-# Account API
+# Transaction API
 
 Project that implements two basic endpoints
-- One to PATCH the credit and withdraw limits
-- One to GET all the accounts with their respective limits
+- One to POST transactions
+- One to POST multiple Payments
 
 ## Suggestion for improvement
 - 
@@ -44,7 +44,7 @@ docker ps
 The result should be like this:
 ```
 CONTAINER ID        IMAGE               COMMAND                  CREATED                  STATUS              PORTS                    NAMES
-c32dc1bd81ee        account             "/usr/lib/jvm/java-8…"   Less than a second ago   Up 2 seconds        0.0.0.0:8080->8080/tcp   account
+c32dc1bd81ee        transacti           "/usr/lib/jvm/java-8…"   Less than a second ago   Up 2 seconds        0.0.0.0:8080->8080/tcp   transaction
 ```
 
 Get the CONTAINER ID and execute this:
