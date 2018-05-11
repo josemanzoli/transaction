@@ -1,5 +1,6 @@
 package com.manza.transactions.controller;
 
+import com.manza.transactions.dto.PaymentDto;
 import com.manza.transactions.dto.TransactionDto;
 import com.manza.transactions.exception.TransactionNotFoundException;
 import com.manza.transactions.service.TransactionService;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/v1")
@@ -48,7 +50,7 @@ public class TransactionsController {
     }
 
     @PostMapping(path = "/payments", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<String> payments(@RequestBody String body) {
-        return new ResponseEntity<>("payments", HttpStatus.OK);
+    public ResponseEntity<?> payments(@RequestBody List<PaymentDto> body) {
+
     }
 }

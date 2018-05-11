@@ -15,6 +15,10 @@ public class OperationType {
     public OperationType() {
     }
 
+    public OperationType(Long operationTypeId) {
+        this.operationTypeId = operationTypeId;
+    }
+
     public OperationType(Long operationTypeId, String description, Long chargeOrder) {
         this.operationTypeId = operationTypeId;
         this.description = description;
