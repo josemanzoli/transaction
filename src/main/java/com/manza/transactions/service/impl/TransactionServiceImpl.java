@@ -16,9 +16,10 @@ import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.*;
+import static com.manza.transactions.model.OperationType.COMPRA_A_VISTA;
+import static com.manza.transactions.model.OperationType.SAQUE;
+import static java.util.stream.Collectors.toList;
 
 
 @Service
@@ -60,8 +61,8 @@ public class TransactionServiceImpl implements TransactionService {
                 findByAccountIdAndBalanceGreaterThanAndOperationTypeIsBetween(
                         accountId,
                         new BigDecimal(0),
-                        new OperationType(1L),
-                        new OperationType(3L))
+                        new OperationType(COMPRA_A_VISTA),
+                        new OperationType(SAQUE))
                 .stream()
                 .sorted(Comparator.comparing(Transaction::getOperationType, (operationType1, operationType2) -> {
                     if (operationType1.getChargeOrder().equals(operationType2.getChargeOrder())){

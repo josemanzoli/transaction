@@ -3,6 +3,7 @@ package com.manza.transactions.controller;
 import com.manza.transactions.application.Application;
 import com.manza.transactions.dto.TransactionDto;
 import com.manza.transactions.exception.TransactionNotFoundException;
+import com.manza.transactions.model.OperationType;
 import com.manza.transactions.service.TransactionService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,6 +22,7 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import static com.manza.transactions.model.OperationType.COMPRA_A_VISTA;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -29,8 +31,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class TransactionsControllerTest {
 
-    private TransactionDto transactionDto = new TransactionDto(1L, 1L, new BigDecimal(123.45));
-    private TransactionDto transactionDtoSaved = new TransactionDto(1L, 1L, new BigDecimal(123.45));
+    private TransactionDto transactionDto = new TransactionDto(1L, COMPRA_A_VISTA, new BigDecimal(123.45));
+    private TransactionDto transactionDtoSaved = new TransactionDto(1L, COMPRA_A_VISTA, new BigDecimal(123.45));
     private static final String content = "{\"account_id\": 1, \"operation_type_id\": 1, \"amount\": 123.45}";
     private static final String transactionsUrl = "/v1/transactions";
 

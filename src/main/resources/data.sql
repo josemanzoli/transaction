@@ -1,3 +1,4 @@
+delete from operation_type;
 insert into operation_type(operation_type_id, description, charge_order)
 values (1, 'compra a vista', 2);
 insert into operation_type(operation_type_id, description, charge_order)

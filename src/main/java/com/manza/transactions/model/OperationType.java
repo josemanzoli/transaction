@@ -7,29 +7,34 @@ import java.util.Objects;
 @Entity
 public class OperationType {
 
+    public static final Integer COMPRA_A_VISTA = 1;
+    public static final Integer COMPRA_PARCELADA = 2;
+    public static final Integer SAQUE = 3;
+    public static final Integer PAGAMENTO = 4;
+
     @Id
-    private Long operationTypeId;
+    private Integer operationTypeId;
     private String description;
     private Long chargeOrder;
 
     public OperationType() {
     }
 
-    public OperationType(Long operationTypeId) {
+    public OperationType(Integer operationTypeId) {
         this.operationTypeId = operationTypeId;
     }
 
-    public OperationType(Long operationTypeId, String description, Long chargeOrder) {
+    public OperationType(Integer operationTypeId, String description, Long chargeOrder) {
         this.operationTypeId = operationTypeId;
         this.description = description;
         this.chargeOrder = chargeOrder;
     }
 
-    public Long getOperationTypeId() {
+    public Integer getOperationTypeId() {
         return operationTypeId;
     }
 
-    public void setOperationTypeId(Long operationTypeId) {
+    public void setOperationTypeId(Integer operationTypeId) {
         this.operationTypeId = operationTypeId;
     }
 

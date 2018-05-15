@@ -3,6 +3,7 @@ package com.manza.transactions.controller;
 import com.manza.transactions.dto.PaymentDto;
 import com.manza.transactions.dto.TransactionDto;
 import com.manza.transactions.exception.TransactionNotFoundException;
+import com.manza.transactions.service.PaymentsService;
 import com.manza.transactions.service.TransactionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,9 @@ public class TransactionsController {
 
     @Autowired
     private TransactionService transactionService;
+
+    @Autowired
+    private PaymentsService paymentsService;
 
     @PostMapping(path = "/transactions", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<?> transactions(@RequestBody TransactionDto transactionDto) {
@@ -50,7 +54,12 @@ public class TransactionsController {
     }
 
     @PostMapping(path = "/payments", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<?> payments(@RequestBody List<PaymentDto> body) {
-
+    public ResponseEntity<?> payments(@RequestBody List<PaymentDto> paymentDtoList) {
+        try {
+            return new ResponseEntity<>(paymentsService.processPayments(paymentDtoList), HttpStatus.OK);
+        } catch (Exception e){
+            LOGGER.error("Exception at POST payments. Message : {}", e.getMessage());
+            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

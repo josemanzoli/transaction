@@ -10,7 +10,7 @@ public class TransactionDto {
 
     private Long transactionId;
     private Long accountId;
-    private Long operationTypeId;
+    private Integer operationTypeId;
     private BigDecimal amount;
     private BigDecimal balance;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
@@ -21,7 +21,7 @@ public class TransactionDto {
     public TransactionDto() {
     }
 
-    public TransactionDto(Long accountId, Long operationTypeId, BigDecimal amount) {
+    public TransactionDto(Long accountId, Integer operationTypeId, BigDecimal amount) {
         this.accountId = accountId;
         this.operationTypeId = operationTypeId;
         this.amount = amount.setScale(2, BigDecimal.ROUND_HALF_EVEN);
@@ -43,11 +43,11 @@ public class TransactionDto {
         this.accountId = accountId;
     }
 
-    public Long getOperationTypeId() {
+    public Integer getOperationTypeId() {
         return operationTypeId;
     }
 
-    public void setOperationTypeId(Long operationTypeId) {
+    public void setOperationTypeId(Integer operationTypeId) {
         this.operationTypeId = operationTypeId;
     }
 
