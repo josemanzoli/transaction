@@ -32,40 +32,41 @@ public class PaymentsServiceImpl implements PaymentsService {
     private PaymentsTrackingRepository paymentsTrackingRepository;
 
     @Override
-    public List<PaymentDto> processPayments(List<PaymentDto> paymentDtoList) throws Exception {
-        return paymentDtoList.stream().peek(paymentDto -> {
+    public PaymentDto processPayments(PaymentDto paymentDto) throws Exception {
+        //find the transactions (COMPRA_A_VISTA, COMPRA_PARCELADA, SAQUE) in the database that are not with 0.00 balance
+        List<TransactionDto> transactionList = transactionService.findByAccountIdAndBalanceGreaterThanAndOperationTypeIsBetween(paymentDto.getAccountId());
 
-            List<TransactionDto> transactionList = transactionService.findByAccountIdAndBalanceGreaterThanAndOperationTypeIsBetween(paymentDto.getAccountId());
+        //create a payment transaction and add to database
+        TransactionDto paymentTransactionDto = new TransactionDto(paymentDto.getAccountId(), PAGAMENTO, paymentDto.getAmount());
+        paymentTransactionDto.setBalance(paymentDto.getAmount());
+        paymentTransactionDto = transactionService.addTransaction(paymentTransactionDto);
 
-            TransactionDto paymentTransactionDto = new TransactionDto(paymentDto.getAccountId(), PAGAMENTO, paymentDto.getAmount());
-            paymentTransactionDto.setBalance(paymentDto.getAmount());
-            paymentTransactionDto = transactionService.addTransaction(paymentTransactionDto);
+        //loop to the debit transactions in order to update the balance
+        for (TransactionDto debitTransactionDto : transactionList){
 
-            for (TransactionDto debitTransactionDto : transactionList){
+            //only do something if the payment transaction still have funds
+            if (paymentDto.getAmount().compareTo(BigDecimal.ZERO) > 0) {
 
-                if (paymentDto.getAmount().compareTo(BigDecimal.ZERO) > 0) {
-                    BigDecimal paymentBalance = paymentDto.getAmount().subtract(debitTransactionDto.getBalance());
+                //subtract the debit amount from the payment amount
+                BigDecimal paymentBalance = paymentDto.getAmount().subtract(debitTransactionDto.getBalance());
 
-                    if (paymentBalance.compareTo(BigDecimal.ZERO) <= 0) {
+                //if the paymentBalance <= 0 means that the payment was not enough to pay the entire balance of the debit transaction
+                if (paymentBalance.compareTo(BigDecimal.ZERO) <= 0) {
+                    persistPayments(paymentBalance.abs(), BigDecimal.ZERO, debitTransactionDto, paymentTransactionDto, paymentDto.getAmount());
+                    paymentDto.setAmount(BigDecimal.ZERO);
+                    continue;
+                }
 
-                        if (paymentBalance.compareTo(BigDecimal.ZERO) < 0 )
-                            persistPayments(paymentBalance.abs(), BigDecimal.ZERO, debitTransactionDto, paymentTransactionDto, debitTransactionDto.getBalance());
-                        else
-                            persistPayments(paymentBalance, paymentBalance, debitTransactionDto, paymentTransactionDto, paymentDto.getAmount());
+                //if the paymentBalance > 0 means that the debit amount is 0 now and I have more payment balance to keep paying
+                if (paymentBalance.compareTo(BigDecimal.ZERO) > 0) {
+                    persistPayments(BigDecimal.ZERO, paymentBalance, debitTransactionDto, paymentTransactionDto, debitTransactionDto.getBalance());
 
-                        paymentDto.setAmount(BigDecimal.ZERO);
-                        paymentDto.setPaymentProcessed(PaymentProcessed.OK);
-                        continue;
-                    }
-
-                    if (paymentBalance.compareTo(BigDecimal.ZERO) > 0) {
-                        persistPayments(BigDecimal.ZERO, paymentBalance, debitTransactionDto, paymentTransactionDto, debitTransactionDto.getBalance());
-
-                        paymentDto.setAmount(paymentBalance);
-                    }
+                    paymentDto.setAmount(paymentBalance);
                 }
             }
-        }).collect(Collectors.toList());
+        }
+        paymentDto.setPaymentProcessed(PaymentProcessed.OK);
+        return paymentDto;
     }
 
     public void persistPayments (BigDecimal debitPaymentBalance, BigDecimal paymentTransactionBalance, TransactionDto debitTransactionDto, TransactionDto paymentTransactionDto, BigDecimal amountTracking){
